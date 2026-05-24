@@ -1,0 +1,25 @@
+﻿GD32F470 Development Kit V2资源/
+tmp_manual_images/
+tmp_schematic_images/
+tmp_uart_pages/
+*.pdf
+
+*.uvguix.*
+*.uvgui.*
+*.bak
+*.dep
+*.crf
+*.d
+*.o
+*.axf
+*.map
+*.lst
+*.lnp
+*.htm
+*.build_log.htm
+
+Listings/
+Objects/
+DebugConfig/
+JLinkLog.txt
+JLinkSettings.ini
