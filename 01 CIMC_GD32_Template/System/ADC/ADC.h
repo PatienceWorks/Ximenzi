@@ -23,6 +23,8 @@
 
 void ADC_port_init(void); //adc端口初始化
 void ADC_Init(void);     //  ADC 初始化
+uint16_t ADC_ReadRaw(void);       // 读取ADC原始值
+uint32_t ADC_ReadMillivolt(void); // 读取ADC电压，单位mV
 				    
 #endif
 

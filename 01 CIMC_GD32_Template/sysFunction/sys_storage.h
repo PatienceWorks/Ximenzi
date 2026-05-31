@@ -1,25 +1,29 @@
 #ifndef __SYS_STORAGE_H
 #define __SYS_STORAGE_H
 
+#include <stdint.h>
+
 /*
- * sys_storage
+ * sys_storage£ºÌâÄ¿ÒªÇóµÄ´æ´¢ÒµÎñÄ£¿é¡£
  *
- * åŠŸèƒ½å®šä½ï¼š
- *   é…ç½®æ–‡ä»¶å’Œæ‰ç”µä¿å­˜æ¨¡å—ã€‚
- *
- * åç»­éœ€è¦å®ç°ï¼š
- *   1. ä» TF å¡è¯»å– config.iniã€‚
- *   2. è§£æ Ch0 çš„ ratio å’Œ limitã€‚
- *   3. å°† ratioã€limitã€é‡‡æ ·å‘¨æœŸä¿å­˜åˆ°å¤–éƒ¨ Flashã€‚
- *   4. ä»å¤–éƒ¨ Flash è¯»å–å·²ä¿å­˜é…ç½®ã€‚
- *   5. å¤„ç†æ–‡ä»¶ä¸å­˜åœ¨ã€TF å¡ä¸å­˜åœ¨ã€Flash è¯»å†™å¤±è´¥ç­‰å¼‚å¸¸ã€‚
- *
- * æ³¨æ„ï¼š
- *   SD å¡ã€FatFsã€SPI Flash çš„åº•å±‚é©±åŠ¨ä¸å†™åœ¨è¿™é‡Œã€‚
- *   è¿™é‡Œè´Ÿè´£æŠŠåº•å±‚è¯»å†™ç»„åˆæˆé¢˜ç›®è¦æ±‚çš„ä¸šåŠ¡åŠŸèƒ½ã€‚
+ * ¸ºÔğ£º
+ *   1. ´Ó TF ¿¨¶ÁÈ¡ config.ini¡£
+ *   2. °Ñ²ÎÊı±£´æµ½Íâ²¿ SPI Flash£¬²¢´Ó Flash »Ö¸´¡£
+ *   3. ÔÚ TF ¿¨ÖĞ´´½¨ sample¡¢overLimit¡¢log¡¢hideData ÎÄ¼ş¼Ğ¡£
+ *   4. °´ 10 ÌõÊı¾İÒ»¸öÎÄ¼şµÄ¹æÔò±£´æ²ÉÑù¡¢³¬ÏŞºÍ¼ÓÃÜÊı¾İ¡£
+ *   5. ¼ÇÂ¼²Ù×÷ÈÕÖ¾£¬ÈÕÖ¾±àºÅÓÉÍâ²¿ Flash ±£´æ£¬¶Ïµçºó¼ÌĞøµİÔö¡£
  */
 
-void Sys_LoadConfig(void);
-void Sys_SaveConfig(void);
+void Sys_StorageInit(void);
+
+void Sys_LoadConfig(void);          /* ´Ó TF ¿¨¶ÁÈ¡ config.ini£¬ÃüÁî conf Ê¹ÓÃ¡£ */
+void Sys_SaveConfig(void);          /* ´®¿ÚÃüÁî config save Ê¹ÓÃ£¬»á´òÓ¡½á¹û¡£ */
+void Sys_SaveConfigSilent(void);    /* ÄÚ²¿×Ô¶¯±£´æÊ¹ÓÃ£¬²»¶îÍâ´òÓ¡¡£ */
+void Sys_LoadSavedConfig(void);     /* ´Ó Flash ¶ÁÈ¡ÅäÖÃ£¬ÃüÁî config read Ê¹ÓÃ¡£ */
+void Sys_LoadSavedConfigSilent(void); /* ÉÏµç×Ô¶¯»Ö¸´ÅäÖÃÊ¹ÓÃ£¬²»´òÓ¡´®¿Ú¡£ */
+
+void Sys_LogOperation(const char *text);
+void Sys_StorageWriteSample(uint16_t adc_raw, uint32_t adc_mv, uint32_t ch0_mv, uint8_t over_limit, uint8_t hide_mode);
+void Sys_TfWriteTest(void);
 
 #endif

@@ -297,3 +297,154 @@ uint8_t usart_input_threshold(uint32_t value)
     index = (tmp[1] - 0x30) + ((tmp[0] - 0x30) << 4);
     return index;
 }
+
+/************************************************************
+ * Function :       RTC_TestInitFixed
+ * Comment  :       RTC测试用固定时间初始化，避免原例程等待串口输入
+ * Parameter:       null
+ * Return   :       null
+************************************************************/
+void RTC_TestInitFixed(void)
+{
+    rcu_periph_clock_enable(RCU_PMU);
+    pmu_backup_write_enable();
+
+    rtc_pre_config();
+
+    rtc_initpara.factor_asyn = prescaler_a;
+    rtc_initpara.factor_syn = prescaler_s;
+    rtc_initpara.year = 0x25;
+    rtc_initpara.day_of_week = RTC_WEDSDAY;
+    rtc_initpara.month = RTC_JAN;
+    rtc_initpara.date = 0x01;
+    rtc_initpara.display_format = RTC_24HOUR;
+    rtc_initpara.am_pm = RTC_AM;
+    rtc_initpara.hour = 0x12;
+    rtc_initpara.minute = 0x00;
+    rtc_initpara.second = 0x00;
+
+    if (ERROR == rtc_init(&rtc_initpara))
+    {
+        usart_send_string("RTC init failed\r\n");
+    }
+    else
+    {
+        RTC_BKP0 = BKP_VALUE;
+        usart_send_string("RTC init success\r\n");
+    }
+}
+
+/************************************************************
+ * Function :       RTC_PrintTime
+ * Comment  :       通过USART打印当前RTC时间
+ * Parameter:       null
+ * Return   :       null
+************************************************************/
+void RTC_PrintTime(void)
+{
+    char time_buf[48];
+
+    rtc_current_time_get(&rtc_initpara);
+    sprintf(time_buf, "RTC: 20%02x-%02x-%02x %02x:%02x:%02x\r\n",
+            rtc_initpara.year,
+            rtc_initpara.month,
+            rtc_initpara.date,
+            rtc_initpara.hour,
+            rtc_initpara.minute,
+            rtc_initpara.second);
+    usart_send_string(time_buf);
+}
+
+/************************************************************
+ * Function :       RTC_GetTimeString
+ * Comment  :       获取当前RTC时间字符串，格式hh:mm:ss
+ * Parameter:       buf: 输出字符串缓存，至少9字节
+ * Return   :       null
+************************************************************/
+void RTC_GetTimeString(char *buf)
+{
+    rtc_current_time_get(&rtc_initpara);
+    sprintf(buf, "%02x:%02x:%02x",
+            rtc_initpara.hour,
+            rtc_initpara.minute,
+            rtc_initpara.second);
+}
+
+
+/************************************************************
+ * Function :       RTC_GetDateTimeFileString
+ * Comment  :       获取当前RTC时间字符串，格式YYYYMMDDhhmmss，用作文件名
+ * Parameter:       buf: 输出字符串缓存，至少15字节
+ * Return   :       null
+************************************************************/
+void RTC_GetDateTimeFileString(char *buf)
+{
+    rtc_current_time_get(&rtc_initpara);
+    sprintf(buf, "20%02x%02x%02x%02x%02x%02x",
+            rtc_initpara.year,
+            rtc_initpara.month,
+            rtc_initpara.date,
+            rtc_initpara.hour,
+            rtc_initpara.minute,
+            rtc_initpara.second);
+}
+static uint8_t RTC_DecToBcd(uint8_t value)
+{
+    return (uint8_t)(((value / 10U) << 4U) | (value % 10U));
+}
+
+/************************************************************
+ * Function :       RTC_PrintNowUart
+ * Comment  :       通过USART打印当前RTC日期和时间
+ * Parameter:       null
+ * Return   :       null
+************************************************************/
+void RTC_PrintNowUart(void)
+{
+    char time_buf[48];
+
+    rtc_current_time_get(&rtc_initpara);
+    sprintf(time_buf, "RTC: 20%02x-%02x-%02x %02x:%02x:%02x\r\n",
+            rtc_initpara.year,
+            rtc_initpara.month,
+            rtc_initpara.date,
+            rtc_initpara.hour,
+            rtc_initpara.minute,
+            rtc_initpara.second);
+    usart_send_string(time_buf);
+}
+
+/************************************************************
+ * Function :       RTC_SetDateTime
+ * Comment  :       设置RTC日期和时间，输入参数为十进制数
+ * Parameter:       year: 例如2025; month/date/hour/minute/second: 十进制
+ * Return   :       1成功，0失败
+************************************************************/
+uint8_t RTC_SetDateTime(uint16_t year, uint8_t month, uint8_t date, uint8_t hour, uint8_t minute, uint8_t second)
+{
+    if ((year < 2000U) || (year > 2099U) ||
+        (month < 1U) || (month > 12U) ||
+        (date < 1U) || (date > 31U) ||
+        (hour > 23U) || (minute > 59U) || (second > 59U)) {
+        return 0U;
+    }
+
+    rtc_initpara.factor_asyn = prescaler_a;
+    rtc_initpara.factor_syn = prescaler_s;
+    rtc_initpara.year = RTC_DecToBcd((uint8_t)(year % 100U));
+    rtc_initpara.day_of_week = RTC_WEDSDAY;
+    rtc_initpara.month = RTC_DecToBcd(month);
+    rtc_initpara.date = RTC_DecToBcd(date);
+    rtc_initpara.display_format = RTC_24HOUR;
+    rtc_initpara.am_pm = RTC_AM;
+    rtc_initpara.hour = RTC_DecToBcd(hour);
+    rtc_initpara.minute = RTC_DecToBcd(minute);
+    rtc_initpara.second = RTC_DecToBcd(second);
+
+    if (ERROR == rtc_init(&rtc_initpara)) {
+        return 0U;
+    }
+
+    RTC_BKP0 = BKP_VALUE;
+    return 1U;
+}

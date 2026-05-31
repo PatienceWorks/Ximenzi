@@ -1,186 +1,131 @@
 /*-----------------------------------------------------------------------*/
-/* Low level disk I/O module skeleton for FatFs     (C)ChaN, 2007        */
-/*-----------------------------------------------------------------------*/
-/* This is a stub disk I/O module that acts as front end of the existing */
-/* disk I/O modules and attach it to FatFs module with common interface. */
+/* Low level disk I/O module for FatFs                                   */
 /*-----------------------------------------------------------------------*/
 
 #include "diskio.h"
+#include "sdcard.h"
+#include <string.h>
 
-/*-----------------------------------------------------------------------*/
-/* Correspondence between physical drive number and physical drive.      */
+#define SD_DRIVE        0U
+#define SD_SECTOR_SIZE  512U
 
-#define ATA		0
-#define MMC		1
-#define USB		2
+static DSTATUS g_sd_status = STA_NOINIT;
+static uint32_t g_sector_buffer[SD_SECTOR_SIZE / 4U];
 
-
-
-/*-----------------------------------------------------------------------*/
-/* Inicializes a Drive                                                    */
-
-DSTATUS disk_initialize (BYTE drv)    /* Physical drive nmuber (0..) */
+DSTATUS disk_initialize(BYTE drv)
 {
-  DSTATUS stat = STA_NOINIT;
-  
-  if(HCD_IsDeviceConnected(&USB_OTG_Core_dev))
-  {  
-    stat &= ~STA_NOINIT;
-  }
-  
-  return stat;
-  
+    if (drv != SD_DRIVE) {
+        return STA_NOINIT;
+    }
+
+    if (sd_init() == SD_OK) {
+        g_sd_status = 0;
+    } else {
+        g_sd_status = STA_NOINIT | STA_NODISK;
+    }
+
+    return g_sd_status;
 }
 
-
-
-/*-----------------------------------------------------------------------*/
-/* Return Disk Status                                                    */
-
-DSTATUS disk_status (
-	BYTE drv		/* Physical drive nmuber (0..) */
-)
+DSTATUS disk_status(BYTE drv)
 {
-	DSTATUS stat;
-	int result;
+    if (drv != SD_DRIVE) {
+        return STA_NOINIT;
+    }
 
-	switch (drv) {
-	case ATA :
-		result = ATA_disk_status();
-		// translate the reslut code here
-
-		return stat;
-
-	case MMC :
-		result = MMC_disk_status();
-		// translate the reslut code here
-
-		return stat;
-
-	case USB :
-		result = USB_disk_status();
-		// translate the reslut code here
-
-		return stat;
-	}
-	return STA_NOINIT;
+    return g_sd_status;
 }
 
-
-
-/*-----------------------------------------------------------------------*/
-/* Read Sector(s)                                                        */
-
-DRESULT disk_read (
-	BYTE drv,		/* Physical drive nmuber (0..) */
-	BYTE *buff,		/* Data buffer to store read data */
-	DWORD sector,	/* Sector address (LBA) */
-	BYTE count		/* Number of sectors to read (1..255) */
-)
+DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, BYTE count)
 {
-	DRESULT res;
-	int result;
+    BYTE i;
+    sd_error_enum status;
 
-	switch (drv) {
-	case ATA :
-		result = ATA_disk_read(buff, sector, count);
-		// translate the reslut code here
+    if ((drv != SD_DRIVE) || (buff == 0) || (count == 0U)) {
+        return RES_PARERR;
+    }
 
-		return res;
+    if (g_sd_status & STA_NOINIT) {
+        return RES_NOTRDY;
+    }
 
-	case MMC :
-		result = MMC_disk_read(buff, sector, count);
-		// translate the reslut code here
+    for (i = 0U; i < count; i++) {
+        status = sd_block_read(g_sector_buffer,
+                               (uint32_t)(sector + i) * SD_SECTOR_SIZE,
+                               SD_SECTOR_SIZE);
+        if (status != SD_OK) {
+            return RES_ERROR;
+        }
+        memcpy(buff + ((uint32_t)i * SD_SECTOR_SIZE), g_sector_buffer, SD_SECTOR_SIZE);
+    }
 
-		return res;
-
-	case USB :
-		result = USB_disk_read(buff, sector, count);
-		// translate the reslut code here
-
-		return res;
-	}
-	return RES_PARERR;
+    return RES_OK;
 }
-
-
-
-/*-----------------------------------------------------------------------*/
-/* Write Sector(s)                                                       */
 
 #if _READONLY == 0
-DRESULT disk_write (
-	BYTE drv,			/* Physical drive nmuber (0..) */
-	const BYTE *buff,	/* Data to be written */
-	DWORD sector,		/* Sector address (LBA) */
-	BYTE count			/* Number of sectors to write (1..255) */
-)
+DRESULT disk_write(BYTE drv, const BYTE *buff, DWORD sector, BYTE count)
 {
-	DRESULT res;
-	int result;
+    BYTE i;
+    sd_error_enum status;
 
-	switch (drv) {
-	case ATA :
-		result = ATA_disk_write(buff, sector, count);
-		// translate the reslut code here
+    if ((drv != SD_DRIVE) || (buff == 0) || (count == 0U)) {
+        return RES_PARERR;
+    }
 
-		return res;
+    if (g_sd_status & STA_NOINIT) {
+        return RES_NOTRDY;
+    }
 
-	case MMC :
-		result = MMC_disk_write(buff, sector, count);
-		// translate the reslut code here
+    for (i = 0U; i < count; i++) {
+        memcpy(g_sector_buffer, buff + ((uint32_t)i * SD_SECTOR_SIZE), SD_SECTOR_SIZE);
+        status = sd_block_write(g_sector_buffer,
+                                (uint32_t)(sector + i) * SD_SECTOR_SIZE,
+                                SD_SECTOR_SIZE);
+        if (status != SD_OK) {
+            return RES_ERROR;
+        }
+    }
 
-		return res;
-
-	case USB :
-		result = USB_disk_write(buff, sector, count);
-		// translate the reslut code here
-
-		return res;
-	}
-	return RES_PARERR;
+    return RES_OK;
 }
-#endif /* _READONLY */
+#endif
 
-
-
-/*-----------------------------------------------------------------------*/
-/* Miscellaneous Functions                                               */
-
-DRESULT disk_ioctl (
-	BYTE drv,		/* Physical drive nmuber (0..) */
-	BYTE ctrl,		/* Control code */
-	void *buff		/* Buffer to send/receive control data */
-)
+DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
 {
-	DRESULT res;
-	int result;
+    if (drv != SD_DRIVE) {
+        return RES_PARERR;
+    }
 
-	switch (drv) {
-	case ATA :
-		// pre-process here
+    if (g_sd_status & STA_NOINIT) {
+        return RES_NOTRDY;
+    }
 
-		result = ATA_disk_ioctl(ctrl, buff);
-		// post-process here
+    switch (ctrl) {
+    case CTRL_SYNC:
+        return RES_OK;
 
-		return res;
+    case GET_SECTOR_SIZE:
+        if (buff == 0) {
+            return RES_PARERR;
+        }
+        *(WORD *)buff = SD_SECTOR_SIZE;
+        return RES_OK;
 
-	case MMC :
-		// pre-process here
+    case GET_SECTOR_COUNT:
+        if (buff == 0) {
+            return RES_PARERR;
+        }
+        *(DWORD *)buff = (DWORD)((sd_card_capacity_get() * 1024UL) / SD_SECTOR_SIZE);
+        return RES_OK;
 
-		result = MMC_disk_ioctl(ctrl, buff);
-		// post-process here
+    case GET_BLOCK_SIZE:
+        if (buff == 0) {
+            return RES_PARERR;
+        }
+        *(DWORD *)buff = 1UL;
+        return RES_OK;
 
-		return res;
-
-	case USB :
-		// pre-process here
-
-		result = USB_disk_ioctl(ctrl, buff);
-		// post-process here
-
-		return res;
-	}
-	return RES_PARERR;
+    default:
+        return RES_PARERR;
+    }
 }
-

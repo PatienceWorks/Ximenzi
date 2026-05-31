@@ -76,3 +76,33 @@ void ADC_Init(void)
 
 /****************************End*****************************/
 
+
+/************************************************************
+ * Function :       ADC_ReadRaw
+ * Comment  :       读取ADC原始采样值，12位范围约为0-4095
+ * Parameter:       null
+ * Return   :       ADC原始值
+************************************************************/
+uint16_t ADC_ReadRaw(void)
+{
+    adc_flag_clear(ADC0, ADC_FLAG_EOC);
+    adc_software_trigger_enable(ADC0, ADC_ROUTINE_CHANNEL);
+
+    while(RESET == adc_flag_get(ADC0, ADC_FLAG_EOC))
+    {
+    }
+
+    return adc_routine_data_read(ADC0);
+}
+
+/************************************************************
+ * Function :       ADC_ReadMillivolt
+ * Comment  :       将ADC原始值换算成电压，参考电压按3300mV计算
+ * Parameter:       null
+ * Return   :       电压值，单位mV
+************************************************************/
+uint32_t ADC_ReadMillivolt(void)
+{
+    uint16_t raw = ADC_ReadRaw();
+    return ((uint32_t)raw * 3300U) / 4095U;
+}

@@ -11,6 +11,12 @@
 #include "HeaderFiles.h"
 
 void RTC_Init(void);	// RTC初始化
+void RTC_TestInitFixed(void);    // RTC固定时间测试初始化
+void RTC_PrintTime(void);        // 串口打印当前RTC时间
+void RTC_GetTimeString(char *buf); // 获取hh:mm:ss时间字符串
+void RTC_GetDateTimeFileString(char *buf); // 获取YYYYMMDDhhmmss文件名时间字符串
+void RTC_PrintNowUart(void);      // 串口打印当前RTC时间
+uint8_t RTC_SetDateTime(uint16_t year, uint8_t month, uint8_t date, uint8_t hour, uint8_t minute, uint8_t second);
 void rtc_setup(void);	// RTC时钟设置
 void rtc_show_time(void);	// RTC时间
 void rtc_show_alarm(void);	// RTC闹钟

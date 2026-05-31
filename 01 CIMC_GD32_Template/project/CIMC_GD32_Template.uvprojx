@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,GD32F470</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CMSIS;..\Startup;..\Library\GD32F4xx_standard_peripheral\Include;..\User;..\HeaderFiles;..\Function;..\CMSIS\GD\GD32F4xx\Include;..\HardWare\KEY;..\HardWare\LED;..\HardWare\OLED;..\HardWare\RTC;..\HardWare\USART;..\System\ADC</IncludePath>
+              <IncludePath>..\CMSIS;..\Startup;..\Library\GD32F4xx_standard_peripheral\Include;..\User;..\HeaderFiles;..\Function;..\CMSIS\GD\GD32F4xx\Include;..\HardWare\KEY;..\HardWare\LED;..\HardWare\OLED;..\HardWare\RTC;..\HardWare\USART;..\System\ADC;..\sysFunction;..\HardWare\SPI_FLASH;..\HardWare\SDCARD;..\Library\Third_Party\fat_fs\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -454,6 +454,26 @@
               <FileName>RTC.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HardWare\RTC\RTC.c</FilePath>
+            </File>
+            <File>
+              <FileName>SPI_FLASH.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HardWare\SPI_FLASH\SPI_FLASH.c</FilePath>
+            </File>
+            <File>
+              <FileName>SPI_FLASH.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HardWare\SPI_FLASH\SPI_FLASH.h</FilePath>
+            </File>
+            <File>
+              <FileName>sdcard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HardWare\SDCARD\sdcard.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdcard.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HardWare\SDCARD\sdcard.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -675,6 +695,81 @@
               <FileName>Readme.txt</FileName>
               <FileType>5</FileType>
               <FilePath>..\01 Readme\Readme.txt</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FatFs</GroupName>
+          <Files>
+            <File>
+              <FileName>ff.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\Third_Party\fat_fs\src\ff.c</FilePath>
+            </File>
+            <File>
+              <FileName>diskio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\Third_Party\fat_fs\src\diskio.c</FilePath>
+            </File>
+            <File>
+              <FileName>fattime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\Third_Party\fat_fs\src\fattime.c</FilePath>
+            </File>
+            <File>
+              <FileName>ccsbcs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\Third_Party\fat_fs\src\option\ccsbcs.c</FilePath>
+            </File>
+            <File>
+              <FileName>ff.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Library\Third_Party\fat_fs\inc\ff.h</FilePath>
+            </File>
+            <File>
+              <FileName>ffconf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Library\Third_Party\fat_fs\inc\ffconf.h</FilePath>
+            </File>
+            <File>
+              <FileName>diskio.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Library\Third_Party\fat_fs\inc\diskio.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>sysFunction</GroupName>
+          <Files>
+            <File>
+              <FileName>sys_command.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\sysFunction\sys_command.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\sysFunction\sys_config.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\sysFunction\sys_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys_display.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\sysFunction\sys_display.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys_sample.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\sysFunction\sys_sample.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys_storage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\sysFunction\sys_storage.c</FilePath>
             </File>
           </Files>
         </Group>

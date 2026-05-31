@@ -1,15 +1,10 @@
 #include "sys_data.h"
 
 /*
- * Sys_CalcVoltage
- *
- * å½“å‰å®ç°ï¼š
- *   Ch0 ç”µå‹ = ADC å®æµ‹ç”µå‹ * ratioã€‚
- *
- * åç»­éœ€è¦æ ¹æ®é¢˜ç›®å’Œç¡¬ä»¶ç¡®è®¤ï¼š
- *   1. ADC åŸå§‹å€¼æ˜¯å¦å·²ç»åœ¨é©±åŠ¨å±‚è½¬æ¢æˆ 0-3.3Vã€‚
- *   2. æ˜¯å¦éœ€è¦åˆ†å‹ç³»æ•°ã€‚
- *   3. è¾“å‡ºæ˜¯å¦ç»Ÿä¸€ä¿ç•™ä¸¤ä½å°æ•°ã€‚
+ * ¸ù¾İ±ÈÀıÏµÊı¼ÆËã Ch0 µçÑ¹¡£
+ * adc_voltage£ºADC Òı½ÅÊµ²âµçÑ¹£¬µ¥Î» V¡£
+ * ratio£º±ÈÀıÏµÊı¡£
+ * ·µ»ØÖµ£º»»ËãºóµÄ Ch0 µçÑ¹£¬µ¥Î» V¡£
  */
 float Sys_CalcVoltage(float adc_voltage, float ratio)
 {
@@ -17,17 +12,28 @@ float Sys_CalcVoltage(float adc_voltage, float ratio)
 }
 
 /*
- * Sys_IsOverLimit
- *
- * å½“å‰å®ç°ï¼š
- *   voltage > limit æ—¶è®¤ä¸ºè¶…é™ã€‚
- *
- * åç»­éœ€è¦é…åˆé‡‡æ ·æ¨¡å—å®ç°ï¼š
- *   1. è¶…é™æ—¶ LED2 ç‚¹äº®ã€‚
- *   2. ä¸²å£è¾“å‡º OverLimit å’Œ limit æ•°å€¼ã€‚
- *   3. hide è¾“å‡ºæœ«å°¾æ ¹æ®é¢˜ç›®è¦æ±‚æ·»åŠ æ ‡è®°ã€‚
+ * Ê¹ÓÃ mV ÕûÊı¼ÆËã Ch0 µçÑ¹£¬¼õÉÙ´®¿Ú´òÓ¡Ê±µÄ¸¡µã¸ñÊ½ÎÊÌâ¡£
+ * adc_mv£ºADC Òı½ÅÊµ²âµçÑ¹£¬µ¥Î» mV¡£
+ * ratio£º±ÈÀıÏµÊı¡£
+ * ·µ»ØÖµ£º»»ËãºóµÄ Ch0 µçÑ¹£¬µ¥Î» mV¡£
  */
+uint32_t Sys_CalcVoltageMillivolt(uint32_t adc_mv, float ratio)
+{
+    return (uint32_t)((float)adc_mv * ratio);
+}
+
+/* ÅĞ¶ÏµçÑ¹ÊÇ·ñ³¬¹ıãĞÖµ£¬µ¥Î» V¡£ */
 uint8_t Sys_IsOverLimit(float voltage, float limit)
 {
     return voltage > limit;
+}
+
+/*
+ * ÅĞ¶ÏµçÑ¹ÊÇ·ñ³¬¹ıãĞÖµ¡£
+ * voltage_mv£ºµ±Ç° Ch0 µçÑ¹£¬µ¥Î» mV¡£
+ * limit£ºãĞÖµ£¬µ¥Î» V¡£
+ */
+uint8_t Sys_IsOverLimitMillivolt(uint32_t voltage_mv, float limit)
+{
+    return voltage_mv > (uint32_t)(limit * 1000.0f);
 }

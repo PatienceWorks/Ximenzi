@@ -4,23 +4,18 @@
 #include <stdint.h>
 
 /*
- * sys_data
+ * sys_data£ºÊı¾İ¼ÆËãºÍÅĞ¶ÏÄ£¿é¡£
  *
- * åŠŸèƒ½å®šä½ï¼š
- *   æ•°æ®è®¡ç®—å’Œç¼–ç å¤„ç†æ¨¡å—ã€‚
+ * ×÷ÓÃ£º
+ *   1. °Ñ ADC ²Éµ½µÄµçÑ¹³ËÒÔ ratio£¬»»Ëã³ÉÌâÄ¿ÒªÇóµÄ Ch0 µçÑ¹¡£
+ *   2. ÅĞ¶Ï Ch0 µçÑ¹ÊÇ·ñ³¬¹ı limit¡£
  *
- * åç»­éœ€è¦å®ç°ï¼š
- *   1. ADC å®æµ‹ç”µå‹ä¹˜ä»¥ ratioï¼Œå¾—åˆ° Ch0 ç”µå‹å€¼ã€‚
- *   2. åˆ¤æ–­ Ch0 ç”µå‹æ˜¯å¦è¶…è¿‡ limitã€‚
- *   3. hide æŒ‡ä»¤ï¼šæ—¶é—´æˆ³ + ç”µå‹å€¼ç¼–ç ä¸º HEX å­—ç¬¦ä¸²ã€‚
- *   4. unhide æŒ‡ä»¤ï¼šHEX å­—ç¬¦ä¸²è§£ç å›æ—¶é—´å’Œç”µå‹ã€‚
- *   5. Unix æ—¶é—´æˆ³è½¬æ¢ã€‚
- *
- * æ³¨æ„ï¼š
- *   ADC åº•å±‚é‡‡æ ·ä¸å†™åœ¨è¿™é‡Œï¼›è¿™é‡Œåªè´Ÿè´£æ•°æ®å¤„ç†ã€‚
+ * ÕâÀï²»¶ÁÈ¡Ó²¼ş£¬Ò²²»ÏÔÊ¾Êı¾İ£¬Ö»×ö´¿¼ÆËã£¬·½±ãºóÃæ²âÊÔºÍ¸´ÓÃ¡£
  */
 
 float Sys_CalcVoltage(float adc_voltage, float ratio);
+uint32_t Sys_CalcVoltageMillivolt(uint32_t adc_mv, float ratio);
 uint8_t Sys_IsOverLimit(float voltage, float limit);
+uint8_t Sys_IsOverLimitMillivolt(uint32_t voltage_mv, float limit);
 
 #endif

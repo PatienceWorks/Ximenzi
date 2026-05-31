@@ -15,7 +15,7 @@
 /************************* 宏定义 *************************/
 
 // KEY引脚定义
-#define KEY1_PIN        GPIO_PIN_2
+#define KEY1_PIN        GPIO_PIN_6
 #define KEY2_PIN        GPIO_PIN_3
 #define KEY3_PIN        GPIO_PIN_4
 #define KEY4_PIN        GPIO_PIN_5

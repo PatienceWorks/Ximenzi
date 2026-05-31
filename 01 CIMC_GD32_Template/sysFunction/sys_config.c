@@ -1,18 +1,17 @@
 #include "sys_config.h"
 
 /*
- * å½“å‰å…ˆä½¿ç”¨ RAM å˜é‡ä¿å­˜é…ç½®ã€‚
- *
- * åç»­å®Œå–„æ–¹å‘ï¼š
- *   1. ä¸Šç”µæ—¶ä¼˜å…ˆä» Flash è¯»å–å·²ä¿å­˜å‚æ•°ã€‚
- *   2. å¦‚æœ Flash æ— æœ‰æ•ˆå‚æ•°ï¼Œåˆ™ä½¿ç”¨é»˜è®¤å€¼ã€‚
- *   3. ä¿®æ”¹ ratioã€limitã€sample_period æ—¶è¿›è¡ŒèŒƒå›´æ£€æŸ¥ã€‚
- *   4. KEY2/KEY3/KEY4 ä¿®æ”¹é‡‡æ ·å‘¨æœŸåï¼Œéœ€è¦ä¿å­˜åˆ° Flashã€‚
+ * µ±Ç°ÏÈÓÃ RAM ±äÁ¿±£´æ²ÎÊı¡£
+ * ºóĞøÈç¹ûÒªÊµÏÖµôµç±£´æ£¬¿ÉÒÔÔÚ Sys_ConfigInit() Àïµ÷ÓÃ sys_storage ´Ó Flash ¶ÁÈ¡²ÎÊı¡£
  */
-static float g_ratio = 1.0f;
-static float g_limit = 100.0f;
-static uint16_t g_sample_period_s = 5;
+static float g_ratio = 1.0f;              /* Ch0 µçÑ¹»»Ëã±ÈÀıÏµÊı£¬Ä¬ÈÏ 1.0£¬±íÊ¾²»·Å´óÒ²²»ËõĞ¡¡£ */
+static float g_limit = 100.0f;            /* Ch0 ³¬ÏŞãĞÖµ£¬µ¥Î» V£¬Ä¬ÈÏ 100V¡£ */
+static uint16_t g_sample_period_s = 5;    /* ²ÉÑùÖÜÆÚ£¬µ¥Î» s£¬Ä¬ÈÏ 5s¡£ */
 
+/*
+ * ³õÊ¼»¯ÏµÍ³²ÎÊı¡£
+ * µ±Ç°Ê¹ÓÃ¹Ì¶¨Ä¬ÈÏÖµ£¬±£Ö¤ÉÏµçºó¼´Ê¹Ã»ÓĞÅäÖÃÎÄ¼şÒ²ÄÜÔËĞĞ¡£
+ */
 void Sys_ConfigInit(void)
 {
     g_ratio = 1.0f;
@@ -20,31 +19,37 @@ void Sys_ConfigInit(void)
     g_sample_period_s = 5;
 }
 
+/* ÉèÖÃ Ch0 µçÑ¹»»Ëã±ÈÀıÏµÊı¡£ */
 void Sys_SetRatio(float ratio)
 {
     g_ratio = ratio;
 }
 
+/* ¶ÁÈ¡µ±Ç° Ch0 µçÑ¹»»Ëã±ÈÀıÏµÊı¡£ */
 float Sys_GetRatio(void)
 {
     return g_ratio;
 }
 
+/* ÉèÖÃ³¬ÏŞãĞÖµ£¬µ¥Î» V¡£ */
 void Sys_SetLimit(float limit)
 {
     g_limit = limit;
 }
 
+/* ¶ÁÈ¡µ±Ç°³¬ÏŞãĞÖµ£¬µ¥Î» V¡£ */
 float Sys_GetLimit(void)
 {
     return g_limit;
 }
 
+/* ÉèÖÃ²ÉÑùÖÜÆÚ£¬µ¥Î» s¡£ */
 void Sys_SetSamplePeriod(uint16_t period_s)
 {
     g_sample_period_s = period_s;
 }
 
+/* ¶ÁÈ¡µ±Ç°²ÉÑùÖÜÆÚ£¬µ¥Î» s¡£ */
 uint16_t Sys_GetSamplePeriod(void)
 {
     return g_sample_period_s;

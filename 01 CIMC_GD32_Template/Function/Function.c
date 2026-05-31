@@ -38,6 +38,16 @@ void System_Init(void)
 	usart_send_string("Device_ID:2025-CIMC-0001\r\n");
 	usart_send_string("====system ready====\r\n");
 	LED_Init();
+	KEY_Init();
+	OLED_Init();
+	OLED_Clear();
+	RTC_TestInitFixed();
+	ADC_port_init();
+	spi_flash_init();
+	Sys_ConfigInit();
+	Sys_LoadSavedConfigSilent();
+	Sys_StorageInit();
+	Sys_SampleInit();
 }
 /************************************************************ 
  * Function :       Init_LED_Stat
@@ -62,13 +72,22 @@ void UsrFunction(void)
 {
 	while(1)
 	{
-		LED1_ON();
-		delay_1ms(500);
-		LED1_OFF();
-		delay_1ms(500);
+		if(recv_flag)
+		{
+			if(recv_real_len >= sizeof(recv_real_buf))
+			{
+				recv_real_len = sizeof(recv_real_buf) - 1U;
+			}
+			recv_real_buf[recv_real_len] = '\0';
+			Sys_CommandProcess((const char *)recv_real_buf);
+			recv_real_len = 0;
+			recv_flag = 0;
+		}
+
+		Sys_SampleTask();
+		delay_1ms(10);
 	}
 }
-
 
 /****************************End*****************************/
 

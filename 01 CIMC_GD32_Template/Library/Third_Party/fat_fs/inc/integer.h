@@ -8,7 +8,7 @@
 #include <windows.h>
 #else
 
-#include "usb_conf.h"
+/* Project does not use USB here. FatFs only needs basic integer types. */
 
 /* These types must be 16-bit, 32-bit or larger integer */
 typedef int				INT;
@@ -33,7 +33,7 @@ typedef unsigned long	DWORD;
 /* Boolean type */
 // typedef enum { FALSE = 0, TRUE } BOOL;
 #include <stdbool.h>
-//typedef bool BOOL;
+typedef bool BOOL;
 #ifndef FALSE
 #define FALSE false
 #define TRUE true

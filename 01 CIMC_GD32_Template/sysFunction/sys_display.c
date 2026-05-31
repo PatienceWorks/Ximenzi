@@ -1,31 +1,34 @@
 #include "sys_display.h"
+#include "OLED.h"
+#include "RTC.h"
+#include <stdio.h>
 
 /*
- * Sys_DisplayIdle
- *
- * é¢˜ç›®è¦æ±‚ï¼š
- *   æœªé‡‡æ ·çŠ¶æ€ä¸‹ï¼ŒOLED ç¬¬ä¸€è¡Œæ˜¾ç¤º "system idle"ï¼Œç¬¬äºŒè¡Œä¸ºç©ºã€‚
- *
- * åç»­éœ€è¦è°ƒç”¨ OLED é©±åŠ¨å®ç°å…·ä½“æ˜¾ç¤ºã€‚
+ * ÏÔÊ¾ÏµÍ³¿ÕÏĞ×´Ì¬¡£
+ * ²ÉÑùÍ£Ö¹ºóµ÷ÓÃ£¬ÓÃÀ´¸æËß²Ù×÷Õßµ±Ç°Ã»ÓĞÔÚ²ÉÑù¡£
  */
 void Sys_DisplayIdle(void)
 {
+    OLED_Clear();
+    OLED_ShowString(0, 0, (u8 *)"system idle", 16);
+    OLED_Refresh();
 }
 
 /*
- * Sys_DisplaySample
- *
- * é¢˜ç›®è¦æ±‚ï¼š
- *   ç¬¬ä¸€è¡Œæ˜¾ç¤º RTC æ—¶é—´ï¼Œæ ¼å¼ hh:mm:ssã€‚
- *   ç¬¬äºŒè¡Œæ˜¾ç¤ºç”µå‹å€¼ï¼Œæ ¼å¼ xx.xx Vã€‚
- *
- * åç»­éœ€è¦ï¼š
- *   1. ä» RTC æ¨¡å—è·å–å½“å‰æ—¶é—´ã€‚
- *   2. æ ¼å¼åŒ–æ—¶é—´å­—ç¬¦ä¸²ã€‚
- *   3. æ ¼å¼åŒ–ç”µå‹å­—ç¬¦ä¸²ã€‚
- *   4. è°ƒç”¨ OLED é©±åŠ¨åˆ·æ–°æ˜¾ç¤ºã€‚
+ * ÏÔÊ¾Ò»´Î²ÉÑù½á¹û¡£
+ * µÚÒ»ĞĞÏÔÊ¾ RTC Ê±¼ä£¬µÚ¶şĞĞÏÔÊ¾»»ËãºóµÄ Ch0 µçÑ¹¡£
+ * voltage_mv£ºCh0 µçÑ¹£¬µ¥Î» mV¡£
  */
-void Sys_DisplaySample(float voltage)
+void Sys_DisplaySample(uint32_t voltage_mv)
 {
-    (void)voltage;
+    char time_buf[12];
+    char voltage_buf[20];
+
+    RTC_GetTimeString(time_buf);
+    sprintf(voltage_buf, "%lu.%02lu V", (unsigned long)(voltage_mv / 1000U), (unsigned long)((voltage_mv % 1000U) / 10U));
+
+    OLED_Clear();
+    OLED_ShowString(0, 0, (u8 *)time_buf, 16);
+    OLED_ShowString(0, 16, (u8 *)voltage_buf, 16);
+    OLED_Refresh();
 }

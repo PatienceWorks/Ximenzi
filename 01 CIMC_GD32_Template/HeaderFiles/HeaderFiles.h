@@ -19,8 +19,19 @@
 #include "string.h"
 #include "Function.h"     // Ö´ÐÐº¯Êý
 #include "LED.h"
+#include "KEY.h"
+#include "OLED.h"
+#include "RTC.h"
 #include "usart.h"
 #include "ADC.h"
+#include "SPI_FLASH.h"
+#include "sdcard.h"
+#include "sys_command.h"
+#include "sys_config.h"
+#include "sys_data.h"
+#include "sys_display.h"
+#include "sys_sample.h"
+#include "sys_storage.h"
 
 #endif
 
